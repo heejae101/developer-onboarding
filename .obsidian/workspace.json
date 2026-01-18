@@ -1,0 +1,220 @@
+{
+  "main": {
+    "id": "21bd39dad08bec82",
+    "type": "split",
+    "children": [
+      {
+        "id": "4132015e57f8a2d6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "49e3844d62c2ea51",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "새 탭"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c60e6ce221bd65b1",
+    "type": "split",
+    "children": [
+      {
+        "id": "757c1b1a0dca047c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "79749a0c301f8eec",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "e04e02c9d2be7369",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "fce3410f17e9d7b6",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "cac240169d307dc0",
+    "type": "split",
+    "children": [
+      {
+        "id": "00fd4945906764cb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d4f2b2c22436c54f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "백링크"
+            }
+          },
+          {
+            "id": "1b804a1d3c6038aa",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "나가는 링크"
+            }
+          },
+          {
+            "id": "9ba7b0a949effc51",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "3adce3b6a72deceb",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "c82938a961585b21",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "49e3844d62c2ea51",
+  "lastOpenFiles": [
+    "frontend/src/features/goal/GoalTracker.jsx",
+    "frontend/src/features/goal/GoalCalendar.jsx",
+    "frontend/src/features/goal/goalStore.js",
+    "backend/target/classes/com/example/demo/domain/goal/GoalController.class",
+    "backend/src/main/java/com/example/demo/domain/goal/GoalController.java",
+    "backend/target/classes/com/example/demo/domain/goal/TodoRepository.class",
+    "backend/src/main/java/com/example/demo/domain/goal/TodoRepository.java",
+    "backend/target/classes/com/example/demo/domain/goal/GoalRepository.class",
+    "backend/src/main/java/com/example/demo/domain/goal/GoalRepository.java",
+    "backend/target/classes/com/example/demo/domain/goal/Todo$TodoBuilder.class",
+    "backend/target/classes/com/example/demo/domain/goal/Todo.class",
+    "frontend/node_modules/@tailwindcss/typography/README.md",
+    "frontend/node_modules/@tailwindcss/vite/README.md",
+    "frontend/node_modules/@tailwindcss/vite/node_modules/tailwindcss/README.md",
+    "frontend/node_modules/postcss-selector-parser/README.md",
+    "frontend/node_modules/postcss-selector-parser/CHANGELOG.md",
+    "frontend/node_modules/postcss-selector-parser/API.md",
+    "frontend/node_modules/cssesc/README.md",
+    "frontend/node_modules/util-deprecate/README.md",
+    "frontend/node_modules/util-deprecate/History.md",
+    "온보딩 웹 사이트 만들기.md",
+    "개발자 질문/온보딩 웹 사이트 만들기.md",
+    "신입 개발자 고민.md",
+    "개발자 질문/신입 개발자 고민.md",
+    "개발자 질문/개발자가 늘면 생산성이 2배가 된다?.md",
+    "frontend/node_modules/enhanced-resolve/README.md",
+    "frontend/node_modules/@tailwindcss/oxide-darwin-arm64/README.md",
+    "frontend/node_modules/@tailwindcss/postcss/README.md",
+    "frontend/node_modules/@tailwindcss/node/README.md",
+    "frontend/node_modules/@tailwindcss/postcss/node_modules/tailwindcss/README.md",
+    "frontend/node_modules/@tailwindcss/node/node_modules/tailwindcss/README.md",
+    "frontend/node_modules/lightningcss-darwin-arm64/README.md",
+    "frontend/node_modules/detect-libc/README.md",
+    "frontend/node_modules/tapable/README.md",
+    "frontend/node_modules/graceful-fs/README.md",
+    "frontend/node_modules/magic-string/README.md",
+    "frontend/src/assets/react.svg",
+    "frontend/public/vite.svg"
+  ]
+}

@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Java / Backend
+target/
+backend/target/
+!.mvn/wrapper/maven-wrapper.jar
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+backend.log
+frontend.log
+
+# Temporary files
+tmp/
+temp/
