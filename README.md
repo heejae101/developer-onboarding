@@ -1,54 +1,52 @@
-# 임시팀장 가이드 (Interim Team Leader Guide)
+# 🚀 지능형 온보딩 및 개발 업무 자동화 플랫폼 (IOAP)
 
-작년 임시팀장직을 수행하며 경험하고 느꼈던 소중한 기록들을 공유하고 관리하기 위한 웹 애플리케이션입니다.
+본 프로젝트는 신규 개발자의 온보딩 과정을 자동화하고, 프로젝트의 표준(Rules)이 실시간으로 적용되는 지능형 업무 환경을 구축하는 플랫폼입니다. 기존 가이드 시스템을 넘어 **LangGraph 에이전트**와 **n8n 스타일의 워크플로우**를 통해 능동적인 업무 보조를 지향합니다.
 
-## 🚀 주요 기능
-- **가이드 문서 조회**: 로컬 마크다운(.md) 파일을 기반으로 한 가이드 열람
-- **현장 지도 상황판**: OpenLayers를 활용한 프로젝트 현장 위치 시각화
-- **실시간 동기화**: 마크다운 파일 수정 시 즉시 DB(H2)와 동기화
-- **API 문서화**: Swagger(OpenAPI)를 통한 백엔드 API 명세 제공
+---
 
-## 🛠 기술 스택
-### Backend
-- **Framework**: Spring Boot 3.x
-- **Language**: Java 17
-- **Database**: H2 Database (In-memory)
-- **Documentation**: SpringDoc OpenAPI (Swagger 3)
-- **Library**: Spring Data JPA, Lombok
+## 🌟 핵심 가치 (Core Vision)
+- **묻지 않고 일하기**: AI 에이전트가 팀의 프로젝트 룰(`rules.md`)을 학습하여 실시간으로 가이드합니다.
+- **업무 자동화**: 반복적인 엑셀 관리와 온보딩 체크리스트를 워크플로우 엔진이 대신 처리합니다.
+- **현무 적합성**: 실무 Java 환경과 최신 AI(Python LangGraph) 생태계를 하이브리드로 결합하여 실질적인 개발 경험을 제공합니다.
 
-### Frontend
-- **Framework**: React (Vite)
-- **Styling**: Tailwind CSS
-- **Maps**: OpenLayers
-- **Icons**: Lucide React
-- **Markdown**: React Markdown
+---
+
+## 🛠 기술 스택 (Updated)
+### Hybrid Backend
+- **Main Server (Java)**: Spring Boot 3.2, Java 17, JPA, PostgreSQL (메인 비즈니스 및 실습 관리)
+- **AI Agent (Python)**: LangGraph, FastAPI, MCP(Model Context Protocol) (지능형 추론 및 도구 연동)
+- **Database**: PostgreSQL (메인 및 AI 상태 저장), Redis (알림 및 캐싱)
+
+### Modern Frontend
+- **Framework**: React 18, Vite 5
+- **Styling**: Tailwind CSS (Modern Glassmorphism)
+- **Libraries**: Lucide React, OpenLayers (GIS 실습), React Query, Zustand
+
+---
+
+## 📁 프로젝트 구조 및 문서화
+프로젝트의 히스토리와 설계 자산은 아래 폴더에서 관리됩니다.
+
+- **[`/01_기획배경`](file:///Users/chaehuijae/Desktop/가이드/01_기획배경)**: 신입 개발자의 고민과 기획의 시작점
+- **[`/02_기획서`](file:///Users/chaehuijae/Desktop/가이드/02_기획서)**: 제품 요구사항 정의서(PRD) 및 핵심 시나리오
+- **[`/03_설계`](file:///Users/chaehuijae/Desktop/가이드/03_설계)**:
+    - [기술 아키텍처 제안서](file:///Users/chaehuijae/Desktop/가이드/03_설계/기술_아키텍처_제안서.md)
+    - [데이터베이스 모델링](file:///Users/chaehuijae/Desktop/가이드/03_설계/01_데이터베이스_모델링.md)
+    - [API 및 인터페이스 설계](file:///Users/chaehuijae/Desktop/가이드/03_설계/02_API_인터페이스_설계.md)
+    - [LangGraph 노드 상세 설계](file:///Users/chaehuijae/Desktop/가이드/03_설계/03_LangGraph_노드_설계.md)
+    - [MVP 개발 계획 (2주 집중)](file:///Users/chaehuijae/Desktop/가이드/03_설계/05_MVP_개발_계획.md)
+
+---
 
 ## 🏃 실행 방법
-
-### 통합 실행 (권장)
-루트 폴더에서 아래 명령어를 실행하면 백엔드와 프론트엔드가 동시에 시작됩니다.
+### 통합 실행
+루트 폴더에서 아래 명령어를 실행하면 백엔드(Java), AI 에이전트(Python MCP), 프론트엔드(React)가 동시에 준비됩니다.
 ```bash
 ./run.sh
 ```
 
-### 개별 실행 (디버깅 시)
-#### Backend 실행
-```bash
-cd backend
-./mvnw spring-boot:run
-```
-- API Endpoint: `http://localhost:8080/api/guides`
-- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+---
 
-#### Frontend 실행
-```bash
-cd frontend
-npm install
-npm run dev
-```
-- UI Address: `http://localhost:5173` (또는 터미널에 표시된 포트)
-
-## 📁 디렉토리 구조
-- `/backend`: Spring Boot 소스 코드
-- `/frontend`: React 소스 코드
-- `/*.md`: 실제 가이드 마크다운 파일들
+## 🎯 마일스톤 (MVP)
+1. **1주차**: Java 베이스 환경 구축 및 랭그래프 기반 RAG 에이전트 연동.
+2. **2주차**: Java 코드 실습 화면 및 AI 실시간 피드백 검증 완료.
