@@ -5,7 +5,12 @@ import '../../styles/ChatArea.css';
 
 const ChatArea = () => {
     const [messages, setMessages] = useState([
-        { id: 1, role: 'ai', content: "안녕하세요! Aura 온보딩 가이드입니다. 오늘 프로젝트와 관련해서 도와드릴까요?", timestamp: '오전 9:00' }
+        {
+            id: 1,
+            role: 'ai',
+            content: "안녕하세요! Aura 온보딩 가이드입니다. 무엇을 도와드릴까요?",
+            timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+        }
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);

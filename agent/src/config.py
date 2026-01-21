@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # LLM Configuration
     llm_mode: str = "api"  # api | local
     llm_provider: str = "openai"  # openai | anthropic
+    embedding_provider: str = "ollama" # openai | ollama
     openai_api_key: str = ""
     anthropic_api_key: str = ""
     

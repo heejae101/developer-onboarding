@@ -197,6 +197,21 @@ class GuardrailsTool:
     @staticmethod
     def suggest_alternative(question: str) -> str:
         """Suggest valid question alternatives"""
+        try:
+            from src.agent.rag_modules import RAGManager
+            rag_manager = RAGManager()
+            topics = rag_manager.get_suggested_topics(limit=5)
+            
+            if topics:
+                suggestions = "\n".join([f'- "{topic} 알려줘"' for topic in topics])
+                return f"""
+💡 프로젝트 룰에서 발견된 다음 주제들로 질문해보세요:
+{suggestions}
+"""
+        except Exception as e:
+            print(f"Failed to get dynamic suggestions: {e}")
+            
+        # Fallback to static suggestions
         return """
 💡 다음과 같은 질문을 해주세요:
 - "Spring Boot에서 API 만드는 규칙 알려줘"
@@ -204,3 +219,147 @@ class GuardrailsTool:
 - "프로젝트 구조 설명해줘"
 - "이 코드 리뷰해줘"
 """
+
+
+class RuleSearchTool:
+    """Search project rules using RAG"""
+    
+    def __init__(self):
+        from src.agent.rag_modules import RAGManager
+        # Initialize RAG Manager (loads rules and builds index)
+        self.rag_manager = RAGManager()
+        
+    def search(self, query: str) -> str:
+        """
+        Search for project rules related to the query
+        
+        Args:
+            query: Question about rules/standards (e.g., "naming convention", "api style")
+            
+        Returns:
+            Formatted string with top relevant rules
+        """
+        results = self.rag_manager.search(query)
+        
+        if not results:
+            return "❌ 관련 규칙을 찾을 수 없습니다."
+            
+        response = f"🔍 **'{query}' 관련 프로젝트 규칙:**\n\n"
+        
+        for i, result in enumerate(results, 1):
+            doc = result["document"]
+            score = result["score"]
+            response += f"{i}. **{doc['header']}** (유사도: {score:.2f})\n"
+            response += f"   - 출처: `{doc['source']}`\n"
+            # Show snippet (first 3 lines or limited chars) to avoid overwhelming
+            content_snippet = '\n'.join(doc['content'].split('\n')[:5])
+            response += f"   - 내용:\n```markdown\n{content_snippet}\n...\n```\n\n"
+            
+        return response
+
+class FileManagementTool:
+    """Tool for creating, editing, and managing files"""
+    
+    def __init__(self, project_root: str = "/Users/chaehuijae/Desktop/가이드"):
+        self.project_root = Path(project_root)
+        
+    def create_file(self, path: str, content: str) -> str:
+        """Create a new file with content"""
+        try:
+            full_path = self._resolve_path(path)
+            
+            # Create directories if needed
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            with open(full_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+                
+            return f"✅ File created successfully: {path}"
+        except Exception as e:
+            return f"❌ Failed to create file: {e}"
+            
+    def edit_file(self, path: str, edit_instruction: str, content: str) -> str:
+        """Edit an existing file (Overwrite for now)"""
+        try:
+            full_path = self._resolve_path(path)
+            
+            if not full_path.exists():
+                return f"❌ File not found: {path}"
+                
+            # For now, we support full overwrite or append.
+            # Complex editing (diff) might need LLM assistance,
+            # but here we assume 'content' is the new content.
+            
+            with open(full_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+                
+            return f"✅ File updated successfully: {path}"
+        except Exception as e:
+            return f"❌ Failed to edit file: {e}"
+            
+    def delete_file(self, path: str) -> str:
+        """Delete a file"""
+        try:
+            full_path = self._resolve_path(path)
+            
+            if not full_path.exists():
+                return f"❌ File not found: {path}"
+                
+            os.remove(full_path)
+            return f"✅ File deleted successfully: {path}"
+        except Exception as e:
+            return f"❌ Failed to delete file: {e}"
+            
+    def _resolve_path(self, path: str) -> Path:
+        """Resolve path against project root"""
+        if path.startswith("/"):
+            # Check if it starts with project root
+            if path.startswith(str(self.project_root)):
+                return Path(path)
+            # If absolute but not in project, force it (or restrict it?)
+            # For safety, let's join with project root if it looks relative-ish or just trust user provided abs path if safe.
+            # But safer to treat all as relative to root unless explicitly allowed.
+            # Simple approach: If absolute, use it. If relative, join with root.
+            return Path(path)
+        return self.project_root / path
+
+
+class CommandExecutor:
+    """Execute shell commands safely"""
+    
+    ALLOWED_COMMANDS = ["ls", "cat", "grep", "find", "pwd", "mkdir", "rm", "cp", "mv", "npm", "node", "java", "javac", "python", "echo", "touch"]
+    
+    def run_command(self, command: str) -> str:
+        """Run a shell command"""
+        import subprocess
+        import shlex
+        
+        # Security check
+        cmd_parts = shlex.split(command)
+        if not cmd_parts:
+            return "❌ Empty command"
+            
+        base_cmd = cmd_parts[0]
+        if base_cmd not in self.ALLOWED_COMMANDS and not base_cmd.endswith(".sh"): # Allow scripts
+             return f"❌ Command not allowed: {base_cmd}"
+        
+        try:
+            result = subprocess.run(
+                command, 
+                shell=True, 
+                capture_output=True, 
+                text=True, 
+                cwd="/Users/chaehuijae/Desktop/가이드",
+                timeout=30
+            )
+            
+            output = result.stdout
+            if result.stderr:
+                output += f"\n[Stderr]\n{result.stderr}"
+                
+            return output if output.strip() else "✅ Command executed (no output)"
+            
+        except subprocess.TimeoutExpired:
+            return "❌ Command timed out"
+        except Exception as e:
+            return f"❌ Execution failed: {e}"

@@ -37,10 +37,16 @@ JSON 형식으로 응답: {{"intent": "SEARCH" | "VERIFY" | "CODE_REVIEW" | "AUT
     ])
     
     try:
-        content = response.choices[0].message.content if hasattr(response, 'choices') else str(response)
+        if hasattr(response, 'choices'):
+            content = response.choices[0].message.content
+        elif hasattr(response, 'content'):
+            content = response.content[0].text if isinstance(response.content, list) else response.content
+        else:
+            content = str(response)
+            
         result = json.loads(content)
         intent: IntentType = result.get("intent", "SEARCH")
-    except (json.JSONDecodeError, AttributeError):
+    except (json.JSONDecodeError, AttributeError, IndexError):
         intent = "SEARCH"
     
     node_map = {
@@ -80,36 +86,61 @@ def search_rules_node(state: AgentState) -> AgentState:
             return state
     
     # Fall back to LLM-based search
-    prompt = f"""사용자 질문에 대해 프로젝트 규칙을 기반으로 답변하세요.
-
-질문: {message}
-
-프로젝트 규칙:
-- API는 RESTful 형식으로 작성
-- Controller에는 @GetMapping, @PostMapping 등 명시적 어노테이션 사용
-- 서비스 레이어에서 비즈니스 로직 처리
-- DTO를 사용하여 요청/응답 데이터 구조화
-
-위 규칙을 참고하여 친절하게 답변해주세요."""
-
-    response = llm.chat([
-        {"role": "system", "content": "You are a helpful developer assistant."},
-        {"role": "user", "content": prompt}
-    ])
+    # Use RAG-based Rule Search
+    from src.agent.tools import RuleSearchTool
+    rule_tool = RuleSearchTool()
+    rag_result = rule_tool.search(message)
     
-    first_choice = response.choices[0] if hasattr(response, 'choices') else response
-    if hasattr(first_choice, 'message'):
-        content = first_choice.message.content
-    elif hasattr(first_choice, 'content'):
-        content = first_choice.content
-    elif isinstance(first_choice, str):
-        content = first_choice
-    else:
-        content = str(response)
+    if "❌" in rag_result:
+        # Fallback to general LLM if no rules found
+        prompt = f"""사용자 질문에 대해 도움이 되는 답변을 제공하세요.
         
-    # Clean up if it's a list containing a TextBlock (Anthropic specific)
-    if isinstance(content, list) and len(content) > 0 and hasattr(content[0], 'text'):
-         content = content[0].text
+        질문: {message}
+        
+        특별한 프로젝트 규칙이 발견되지 않았으니, 일반적인 개발 지식을 바탕으로 답변해주세요."""
+        
+        response = llm.chat([
+            {"role": "system", "content": "You are a helpful developer assistant."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        # Robust content extraction
+        try:
+            if hasattr(response, 'choices'):  # OpenAI
+                content = response.choices[0].message.content
+            elif hasattr(response, 'content'):  # Anthropic
+                content = response.content[0].text if isinstance(response.content, list) else response.content
+            else:
+                content = str(response)
+        except (AttributeError, IndexError):
+            content = str(response)
+    else:
+        # Generate response using RAG result
+        prompt = f"""사용자 질문에 대해 검색된 프로젝트 규칙을 참고하여 답변하세요.
+        
+        질문: {message}
+        
+        [검색된 규칙]
+        {rag_result}
+        
+        위 규칙을 바탕으로 친절하게 설명해주세요. 규칙에 없는 내용은 일반적인 지식으로 보완하되, 규칙을 우선시하세요."""
+        
+        response = llm.chat([
+            {"role": "system", "content": "You are a helpful developer assistant. Use the provided rules to answer."},
+            {"role": "user", "content": prompt}
+        ])
+        
+        # Robust content extraction
+        try:
+            if hasattr(response, 'choices'):  # OpenAI
+                content = response.choices[0].message.content
+            elif hasattr(response, 'content'):  # Anthropic
+                content = response.content[0].text if isinstance(response.content, list) else response.content
+            else:
+                content = str(response)
+        except (AttributeError, IndexError):
+            content = str(response)
+
     state["final_response"] = content
     state["next_node"] = "complete"
     return state
@@ -214,7 +245,12 @@ def think_node(state: AgentState) -> AgentState:
         {"role": "user", "content": prompt}
     ])
     
-    content = response.choices[0].message.content if hasattr(response, 'choices') else str(response)
+    if hasattr(response, 'choices'):
+        content = response.choices[0].message.content
+    elif hasattr(response, 'content'):
+        content = response.content[0].text if isinstance(response.content, list) else response.content
+    else:
+        content = str(response)
     state["current_thought"] = content
     return state
 

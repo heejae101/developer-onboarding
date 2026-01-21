@@ -144,3 +144,13 @@ def get_llm_client() -> LLMClient:
         return AnthropicClient()
     else:
         return OpenAIClient()
+
+
+def get_embedding_client() -> LLMClient:
+    """Factory function to get appropriate Embedding client based on settings"""
+    settings = get_settings()
+    
+    if settings.embedding_provider == "ollama":
+        return OllamaClient()
+    else:
+        return OpenAIClient()

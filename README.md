@@ -39,10 +39,33 @@
 ---
 
 ## 🏃 실행 방법
-### 통합 실행
+### 1. 사전 준비 (RAG 기능 활성화)
+이 프로젝트는 로컬 **Ollama**를 사용하여 프로젝트 규칙을 임베딩하고 검색합니다. 실행 전 아래 과정을 반드시 수행해주세요.
+
+1. **Ollama 설치**: [Ollama 공식 홈페이지](https://ollama.com/)에서 설치
+2. **임베딩 모델 다운로드**:
+    ```bash
+    ollama pull nomic-embed-text
+    ```
+    (메모리 기반 RAG 검색을 위해 필수입니다)
+
+### 2. 통합 실행
 루트 폴더에서 아래 명령어를 실행하면 백엔드(Java), AI 에이전트(Python MCP), 프론트엔드(React)가 동시에 준비됩니다.
 ```bash
 ./run.sh
+```
+
+### 3. AI 에이전트 설정 (`agent/.env`)
+AI 에이전트의 동작 모드를 변경하려면 `agent/.env` 파일을 수정합니다.
+```ini
+# Local Mode (Ollama - 무료, 보안 강점)
+LLM_MODE=local
+LLM_PROVIDER=ollama
+
+# API Mode (OpenAI - 높은 성능)
+# LLM_MODE=api
+# LLM_PROVIDER=openai
+# OPENAI_API_KEY=sk-...
 ```
 
 ---
@@ -50,3 +73,4 @@
 ## 🎯 마일스톤 (MVP)
 1. **1주차**: Java 베이스 환경 구축 및 랭그래프 기반 RAG 에이전트 연동.
 2. **2주차**: Java 코드 실습 화면 및 AI 실시간 피드백 검증 완료.
+
