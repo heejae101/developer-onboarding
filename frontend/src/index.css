@@ -2,50 +2,146 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+  --color-primary-950: #1e1b4b;
 }
 
+/* Base Styles & Theming */
 :root {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light dark;
+
+  /* Default Dark Theme Variables */
+  --bg-app: #020617;
+  /* Slate 950 */
+  --text-main: #f8fafc;
+  /* Slate 50 */
+  --text-muted: #94a3b8;
+  /* Slate 400 */
+
+  --glass-panel-bg: rgba(15, 23, 42, 0.4);
+  /* Slate 900/40 */
+  --glass-panel-border: rgba(255, 255, 255, 0.05);
+
+  --glass-card-bg: rgba(255, 255, 255, 0.05);
+  --glass-card-border: rgba(255, 255, 255, 0.1);
+  --glass-card-hover: rgba(255, 255, 255, 0.1);
+
+  --glass-input-bg: rgba(30, 41, 59, 0.5);
+  /* Slate 800/50 */
+  --glass-input-border: rgba(51, 65, 85, 0.5);
+  --glass-input-text: #f1f5f9;
+
+  color-scheme: dark;
+}
+
+/* Light Theme Overrides */
+[data-theme='light'] {
+  --bg-app: #ffffff;
+  /* Pure White */
+  --text-main: #0f172a;
+  /* Slate 900 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  --glass-panel-bg: rgba(255, 255, 255, 0.85);
+  --glass-panel-border: rgba(0, 0, 0, 0.08);
+
+  --glass-card-bg: rgba(241, 245, 249, 0.6);
+  /* Slate 100/60 */
+  --glass-card-border: rgba(0, 0, 0, 0.05);
+  --glass-card-hover: rgba(241, 245, 249, 0.9);
+
+  --glass-input-bg: rgba(248, 250, 252, 0.9);
+  /* Slate 50/90 */
+  --glass-input-border: rgba(203, 213, 225, 0.8);
+  --glass-input-text: #1e293b;
+
+  color-scheme: light;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  @apply bg-slate-50 text-slate-900 antialiased;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Custom Animations */
-@keyframes slide-in-bottom {
-  from {
-    transform: translateY(1rem);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* Glassmorphism Utilities (Updated to use vars) */
+.glass-panel {
+  background-color: var(--glass-panel-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-panel-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
 }
 
-.animate-slide-in-bottom {
-  animation: slide-in-bottom 0.4s ease-out forwards;
+.glass-card {
+  background-color: var(--glass-card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-card-border);
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  background-color: var(--glass-card-hover);
+}
+
+.glass-input {
+  background-color: var(--glass-input-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-input-border);
+  color: var(--glass-input-text);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.glass-input:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.glass-button {
+  @apply bg-primary-600 hover:bg-primary-500 text-white backdrop-blur-sm shadow-lg shadow-primary-500/20 active:scale-95 transition-all;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--text-muted);
+  border-radius: 9999px;
+  opacity: 0.3;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.5;
 }
