@@ -14,7 +14,7 @@ kill $(lsof -t -i:5173-5175) 2>/dev/null || true
 # 백엔드(Spring Boot) 실행
 echo "📦 백엔드(Spring Boot) 실행 중..."
 cd "$BASE_PATH/backend"
-./mvnw spring-boot:run > "$BASE_PATH/backend.log" 2>&1 &
+./mvnw spring-boot:run | tee "$BASE_PATH/backend.log" &
 BACKEND_PID=$!
 
 # 백엔드 준비 대기
@@ -26,9 +26,9 @@ echo "🤖 AI 에이전트(FastAPI) 실행 중..."
 cd "$BASE_PATH/agent"
 if [ -d ".venv" ]; then
     source .venv/bin/activate
-    uvicorn src.main:app --reload --port 8000 > "$BASE_PATH/agent.log" 2>&1 &
+    uvicorn src.main:app --reload --port 8000 | tee "$BASE_PATH/agent.log" &
 elif command -v poetry &> /dev/null; then
-    poetry run uvicorn src.main:app --reload --port 8000 > "$BASE_PATH/agent.log" 2>&1 &
+    poetry run uvicorn src.main:app --reload --port 8000 | tee "$BASE_PATH/agent.log" &
 else
     echo "⚠️  Poetry가 설치되어 있지 않습니다. agent 서비스 스킵..."
 fi

@@ -1,4 +1,13 @@
 @import "tailwindcss";
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 @plugin "@tailwindcss/typography";
 
 @theme {
@@ -81,11 +90,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#root {
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
+/* #root styles removed (consolidated at top) */
 
 /* Glassmorphism Utilities (Updated to use vars) */
 .glass-panel {

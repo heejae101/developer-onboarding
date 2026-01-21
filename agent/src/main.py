@@ -46,6 +46,10 @@ def create_app() -> FastAPI:
     # Include API routes
     app.include_router(router, prefix="/api/v1")
     
+    # WebSocket router (No prefix or root level)
+    from src.api.websocket import router as ws_router
+    app.include_router(ws_router)
+    
     @app.get("/", tags=["Root"])
     async def root():
         return {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Calendar, CheckCircle2, Circle, LayoutDashboard, Settings, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import '../../styles/Sidebar.css';
 
 const SidebarLeft = () => {
     const { theme, toggleTheme } = useTheme();
@@ -13,20 +14,19 @@ const SidebarLeft = () => {
     ];
 
     return (
-        <div className="w-72 h-full flex flex-col glass-panel border-r border-white/5 p-5 gap-6 z-20">
+        <div className="sidebar-container sidebar-left glass-panel">
             {/* Header / Logo */}
             <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
                         <span className="text-white font-bold text-lg">A</span>
                     </div>
-                    <h1 className="text-lg font-bold tracking-tight text-white/90" style={{ color: 'var(--text-main)' }}>Aura 온보딩</h1>
+                    <h1 className="text-lg font-bold tracking-tight sidebar-logo-text">Aura 온보딩</h1>
                 </div>
 
                 <button
                     onClick={toggleTheme}
-                    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                    style={{ color: 'var(--text-muted)' }}
+                    className="p-2 rounded-lg hover:bg-white/10 transition-colors sidebar-icon-muted"
                     title={theme === 'dark' ? "라이트 모드로 변경" : "다크 모드로 변경"}
                 >
                     {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -44,7 +44,7 @@ const SidebarLeft = () => {
 
             {/* Daily Calendar Widget */}
             <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between text-xs font-medium text-slate-400 uppercase tracking-wider px-2">
+                <div className="flex items-center justify-between sidebar-section-title">
                     <span>Today, Oct 26</span>
                 </div>
                 <div className="glass-card rounded-xl p-4 flex flex-col items-center justify-center h-28 bg-gradient-to-br from-slate-800/30 to-slate-900/30">
@@ -55,7 +55,7 @@ const SidebarLeft = () => {
 
             {/* Task Progress */}
             <div className="flex flex-col gap-3 flex-1 overflow-hidden">
-                <div className="flex items-center justify-between text-xs font-medium text-slate-400 uppercase tracking-wider px-2">
+                <div className="flex items-center justify-between sidebar-section-title">
                     <span>Task Progress (50%)</span>
                 </div>
 
@@ -90,7 +90,7 @@ const SidebarLeft = () => {
 };
 
 const NavItem = ({ icon, label, active }) => (
-    <button className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${active ? 'bg-primary-500/10 text-primary-400' : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--glass-card-hover)]'}`}>
+    <button className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${active ? 'bg-primary-500/10 text-primary-400' : 'sidebar-nav-item'}`}>
         {icon}
         {label}
     </button>

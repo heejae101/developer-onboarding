@@ -6,8 +6,17 @@ from src.llm import get_llm_client
 import json
 
 
-def router_node(state: AgentState) -> AgentState:
+async def router_node(state: AgentState) -> AgentState:
     """Router node - determines intent and routes to appropriate handler"""
+    from src.agent.tools import GuardrailsTool
+    
+    # Validate question first (Async)
+    is_valid, reason = await GuardrailsTool.is_valid_question(state.get("message", ""))
+    if not is_valid:
+        state["final_response"] = reason + GuardrailsTool.suggest_alternative("")
+        state["next_node"] = "complete"
+        return state
+    
     llm = get_llm_client()
     
     prompt = f"""사용자 입력을 분석하여 의도를 파악하세요.
@@ -15,7 +24,7 @@ def router_node(state: AgentState) -> AgentState:
 사용자 입력: {state.get("message", "")}
 
 다음 중 하나를 선택하세요:
-- SEARCH: 단순 질문, 규칙 검색
+- SEARCH: 단순 질문, 규칙 검색, **파일 찾기**
 - VERIFY: 코드/문서가 규칙에 맞는지 검증
 - CODE_REVIEW: 코드 리뷰 요청 (스타일, 버그, 성능)
 - AUTONOMOUS: 복잡한 작업 (파일 생성, 다단계 분석)
@@ -46,14 +55,34 @@ JSON 형식으로 응답: {{"intent": "SEARCH" | "VERIFY" | "CODE_REVIEW" | "AUT
 
 
 def search_rules_node(state: AgentState) -> AgentState:
-    """Search rules using RAG"""
+    """Search rules using RAG or search for files"""
+    from src.agent.tools import FileSearchTool
     llm = get_llm_client()
     
-    # TODO: Implement actual RAG with vector search
-    # For now, use simple LLM call
+    message = state.get("message", "")
+    
+    # Check if asking for file search
+    if any(keyword in message.lower() for keyword in ["파일", "file", "찾", "search", "controller", "service"]):
+        # Try file search first
+        file_tool = FileSearchTool()
+        
+        # Extract search term
+        search_term = message.lower()
+        for word in ["찾아", "찾아줘", "파일", "file", "search"]:
+            search_term = search_term.replace(word, "").strip()
+        
+        results = file_tool.search_files(search_term)
+        
+        if results:
+            file_list = "\n".join([f"- {r['name']} ({r['path']})" for r in results])
+            state["final_response"] = f"다음 파일을 찾았습니다:\n\n{file_list}\n\n더 자세히 보려면 파일명을 말씀해주세요."
+            state["next_node"] = "complete"
+            return state
+    
+    # Fall back to LLM-based search
     prompt = f"""사용자 질문에 대해 프로젝트 규칙을 기반으로 답변하세요.
 
-질문: {state.get("message", "")}
+질문: {message}
 
 프로젝트 규칙:
 - API는 RESTful 형식으로 작성
@@ -68,7 +97,19 @@ def search_rules_node(state: AgentState) -> AgentState:
         {"role": "user", "content": prompt}
     ])
     
-    content = response.choices[0].message.content if hasattr(response, 'choices') else str(response)
+    first_choice = response.choices[0] if hasattr(response, 'choices') else response
+    if hasattr(first_choice, 'message'):
+        content = first_choice.message.content
+    elif hasattr(first_choice, 'content'):
+        content = first_choice.content
+    elif isinstance(first_choice, str):
+        content = first_choice
+    else:
+        content = str(response)
+        
+    # Clean up if it's a list containing a TextBlock (Anthropic specific)
+    if isinstance(content, list) and len(content) > 0 and hasattr(content[0], 'text'):
+         content = content[0].text
     state["final_response"] = content
     state["next_node"] = "complete"
     return state

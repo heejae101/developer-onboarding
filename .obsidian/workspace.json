@@ -182,6 +182,7 @@
   },
   "active": "49e3844d62c2ea51",
   "lastOpenFiles": [
+    "agent/src/agent/tools.py",
     "agent/src/__pycache__/config.cpython-313.pyc",
     "agent/src/llm/__pycache__/client.cpython-313.pyc",
     "agent/src/llm/__pycache__/__init__.cpython-313.pyc",
@@ -192,7 +193,6 @@
     "agent/src/agent/__pycache__/state.cpython-313.pyc",
     "agent/src/agent/__pycache__",
     "agent/src/api/__pycache__/schemas.cpython-313.pyc",
-    "agent/src/api/__pycache__/routes.cpython-313.pyc",
     "agent/README.md",
     "02_기획서/01_온보딩_웹_사이트_만들기.md",
     "03_설계/01_데이터베이스_모델링.md",

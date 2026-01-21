@@ -1,11 +1,12 @@
 import React from 'react';
 import { BookOpen, Info, Search, ShieldCheck } from 'lucide-react';
+import '../../styles/Sidebar.css';
 
 const SidebarRight = () => {
     return (
-        <div className="w-80 h-full hidden lg:flex flex-col glass-panel border-l border-white/5 p-5 gap-6 z-20">
+        <div className="sidebar-container sidebar-right glass-panel hidden lg:flex">
             <div className="flex items-center justify-between px-1">
-                <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-main)' }}>
+                <h3 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2 sidebar-logo-text">
                     <BookOpen size={16} className="text-primary-400" />
                     컨텍스트 (Context)
                 </h3>
@@ -52,7 +53,7 @@ const SidebarRight = () => {
 
             {/* Useful Links / Docs */}
             <div className="mt-auto">
-                <h4 className="text-xs font-bold uppercase mb-3 px-1" style={{ color: 'var(--text-muted)' }}>빠른 참고 문서</h4>
+                <h4 className="text-xs font-bold uppercase mb-3 px-1 sidebar-section-title">빠른 참고 문서</h4>
                 <div className="flex flex-col gap-1">
                     <DocLink label="아키텍처 개요" />
                     <DocLink label="DB 스키마" />
@@ -64,7 +65,7 @@ const SidebarRight = () => {
 };
 
 const DocLink = ({ label }) => (
-    <a href="#" className="block px-3 py-2 rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--glass-card-hover)] transition-colors truncate">
+    <a href="#" className="block px-3 py-2 rounded-lg text-sm transition-colors truncate doc-link">
         {label}
     </a>
 )

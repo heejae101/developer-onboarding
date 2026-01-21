@@ -41,6 +41,7 @@ def build_agent_graph() -> StateGraph:
             "verify": "verify",
             "code_review": "code_review",
             "autonomous": "think",
+            "complete": "complete",
         }
     )
     

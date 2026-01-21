@@ -13,9 +13,11 @@ from src.api.schemas import (
 )
 from src.agent import get_agent_graph, AgentState
 from src.config import get_settings
+from src.api import websocket
 import uuid
 
 router = APIRouter()
+router.include_router(websocket.router)
 
 
 @router.get("/health", response_model=HealthResponse, tags=["Health"])
@@ -45,7 +47,7 @@ async def chat(request: ChatRequest):
             "user_code": request.user_code,
         }
         
-        result = graph.invoke(initial_state)
+        result = await graph.ainvoke(initial_state)
         
         return ChatResponse(
             response=result.get("final_response", "응답을 생성할 수 없습니다."),
