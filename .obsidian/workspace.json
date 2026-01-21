@@ -11,10 +11,14 @@
             "id": "49e3844d62c2ea51",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "03_설계/02_API_인터페이스_설계.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "새 탭"
+              "title": "02_API_인터페이스_설계"
             }
           }
         ]
@@ -178,6 +182,19 @@
   },
   "active": "49e3844d62c2ea51",
   "lastOpenFiles": [
+    "03_설계/01_데이터베이스_모델링.md",
+    "03_설계/work_planner_mockup.png",
+    "01_기획배경/05_커리어_성장과_동료_네트워킹.md",
+    "01_기획배경/04_AI_시대의_제품_관리와_엔지니어의_역할.md",
+    "01_기획배경/03_AI_시대의_생산성과_더블링_타임.md",
+    "01_기획배경/02_개발자가_늘면_생산성이_2배가_된다.md",
+    "01_기획배경/01_신입_개발자_고민.md",
+    "03_설계/persona_settings_mockup.png",
+    "03_설계/ai_onboarding_dashboard_mockup.png",
+    "03_설계/admin_dashboard_mockup.png",
+    "01_기획배경/05_커리어 성장과 동료 네트워킹.md",
+    "01_기획배경/04_AI 시대의 제품 관리와 엔지니어의 역할.md",
+    "01_기획배경/03_AI 시대의 생산성과 더블링 타임.md",
     "frontend/src/features/goal/GoalTracker.jsx",
     "frontend/src/features/goal/GoalCalendar.jsx",
     "frontend/src/features/goal/goalStore.js",
@@ -188,7 +205,6 @@
     "backend/target/classes/com/example/demo/domain/goal/GoalRepository.class",
     "backend/src/main/java/com/example/demo/domain/goal/GoalRepository.java",
     "backend/target/classes/com/example/demo/domain/goal/Todo$TodoBuilder.class",
-    "backend/target/classes/com/example/demo/domain/goal/Todo.class",
     "frontend/node_modules/@tailwindcss/typography/README.md",
     "frontend/node_modules/@tailwindcss/vite/README.md",
     "frontend/node_modules/@tailwindcss/vite/node_modules/tailwindcss/README.md",
@@ -206,14 +222,6 @@
     "frontend/node_modules/enhanced-resolve/README.md",
     "frontend/node_modules/@tailwindcss/oxide-darwin-arm64/README.md",
     "frontend/node_modules/@tailwindcss/postcss/README.md",
-    "frontend/node_modules/@tailwindcss/node/README.md",
-    "frontend/node_modules/@tailwindcss/postcss/node_modules/tailwindcss/README.md",
-    "frontend/node_modules/@tailwindcss/node/node_modules/tailwindcss/README.md",
-    "frontend/node_modules/lightningcss-darwin-arm64/README.md",
-    "frontend/node_modules/detect-libc/README.md",
-    "frontend/node_modules/tapable/README.md",
-    "frontend/node_modules/graceful-fs/README.md",
-    "frontend/node_modules/magic-string/README.md",
     "frontend/src/assets/react.svg",
     "frontend/public/vite.svg"
   ]
