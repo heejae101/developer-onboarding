@@ -1,0 +1,19 @@
+{
+  "enable_self_rag": true,
+  "max_search_retries": 2,
+  "relevance_threshold": 0.6,
+  "enable_parallel_search": true,
+  "parallel_sources": [
+    "rag",
+    "file"
+  ],
+  "enable_answer_grading": true,
+  "min_answer_score": 0.7,
+  "max_refine_attempts": 2,
+  "enable_human_approval": true,
+  "approval_actions": [
+    "file_create",
+    "code_execute"
+  ],
+  "enable_step_logging": true
+}

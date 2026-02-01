@@ -106,5 +106,85 @@ poetry run pytest
 
 ---
 
+## 🎛️ LangGraph 그래프 구조 개선
+
+### 개선 전 vs 개선 후
+
+#### 개선 전 (단방향)
+```mermaid
+flowchart LR
+    router --> search --> complete --> END
+    router --> verify --> complete
+    router --> code_review --> complete
+```
+
+#### 개선 후 (동적 패턴)
+```mermaid
+flowchart TB
+    subgraph SelfRAG["🔄 Self-RAG Loop"]
+        search --> evaluate
+        evaluate -->|부족| search
+        evaluate -->|충분| synthesize
+    end
+    
+    subgraph Grading["⭐ Answer Quality Loop"]
+        grade -->|낮음| refine
+        refine --> grade
+        grade -->|OK| complete
+    end
+    
+    router --> search
+    synthesize --> grade
+```
+
+---
+
+### 활성화 가능한 패턴
+
+| 패턴 | 설정 키 | 설명 |
+|------|---------|------|
+| 🔄 **Self-RAG** | `enable_self_rag` | RAG 결과 평가 → 부족하면 재검색 |
+| ⚡ **병렬 검색** | `enable_parallel_search` | RAG + 파일검색 동시 실행 |
+| ⭐ **답변 품질 평가** | `enable_answer_grading` | 답변 품질 평가 → 낮으면 개선 |
+| 👤 **사용자 확인** | `enable_human_approval` | 중요 결정에서 승인 요청 |
+| 📋 **스텝 로깅** | `enable_step_logging` | 각 노드 실행 로그 출력 |
+
+---
+
+### 관리자 API
+
+```bash
+# 현재 설정 조회
+curl http://localhost:8000/api/admin/graph-settings
+
+# 설정 업데이트
+curl -X PUT http://localhost:8000/api/admin/graph-settings \
+  -H "Content-Type: application/json" \
+  -d '{"enable_self_rag": false}'
+
+# 그래프 시각화 정보
+curl http://localhost:8000/api/admin/graph-visualization
+```
+
+### 관리자 페이지
+```
+http://localhost:5173/admin
+```
+
+---
+
+### 관련 파일
+
+| 파일 | 설명 |
+|------|------|
+| `src/graph_settings.py` | 그래프 패턴 설정 관리 모듈 |
+| `src/agent/enhanced_nodes.py` | Self-RAG, 병렬검색, Answer Grading 노드 |
+| `src/api/admin_routes.py` | 관리자 설정 API |
+| `src/agent/graph.py` | 동적 그래프 빌더 |
+| `src/agent/state.py` | Self-RAG, 병렬검색, Grading 상태 필드 |
+
+---
+
 ## 📝 라이선스
 MIT License
+
