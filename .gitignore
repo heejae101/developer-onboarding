@@ -36,3 +36,6 @@ frontend.log
 # Temporary files
 tmp/
 temp/
+
+#AI
+AGENTS.md
