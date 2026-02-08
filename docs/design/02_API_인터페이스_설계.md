@@ -105,6 +105,24 @@ graph LR
 | GET | `/api/v1/notifications` | 알림 목록 |
 | PATCH | `/api/v1/notifications/{id}/read` | 읽음 처리 |
 
+### 2.6 GIS 실습 (P6 보완)
+
+| Method | Endpoint | 설명 |
+|:---|:---|:---|
+| GET | `/api/v1/gis/samples` | 샘플 데이터 목록 조회 |
+| GET | `/api/v1/gis/samples/{id}` | 샘플 데이터 상세(GeoJSON) |
+| POST | `/api/v1/gis/samples` | 샘플 데이터 등록 (관리자) |
+
+### 2.7 지식 공유 게시판 (P7 보완)
+
+| Method | Endpoint | 설명 |
+|:---|:---|:---|
+| GET | `/api/v1/knowledge` | 게시글 목록 조회 |
+| GET | `/api/v1/knowledge/{id}` | 게시글 상세 조회 |
+| POST | `/api/v1/knowledge` | 게시글 생성 (관리자) |
+| PUT | `/api/v1/knowledge/{id}` | 게시글 수정 (관리자) |
+| DELETE | `/api/v1/knowledge/{id}` | 게시글 삭제 (관리자) |
+
 ---
 
 ## 3. WebSocket 인터페이스 (신규)
