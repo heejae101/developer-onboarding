@@ -15,7 +15,7 @@ def test_suggestions():
         print(suggestion)
         print("-" * 50)
     except Exception as e:
-        print(f"❌ Failed to get suggestions: {e}")
+        print(f"Failed to get suggestions: {e}")
 
 if __name__ == "__main__":
     test_suggestions()

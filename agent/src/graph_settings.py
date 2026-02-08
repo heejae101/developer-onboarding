@@ -111,7 +111,7 @@ def save_graph_settings(settings: GraphSettings) -> None:
     """설정을 파일에 저장"""
     global _runtime_settings
     
-    print(f"💾 [Settings] Saving new configuration...")
+    print("[Settings] Saving new configuration...")
     print(f"   - Self-RAG: {settings.enable_self_rag}")
     print(f"   - Parallel Search: {settings.enable_parallel_search}")
     print(f"   - Answer Grading: {settings.enable_answer_grading}")
@@ -121,7 +121,7 @@ def save_graph_settings(settings: GraphSettings) -> None:
     
     # 런타임 설정 즉시 업데이트
     _runtime_settings = settings
-    print("✅ [Settings] Configuration saved and runtime updated")
+    print("[Settings] Configuration saved and runtime updated")
 
 
 def update_graph_settings(**kwargs) -> GraphSettings:

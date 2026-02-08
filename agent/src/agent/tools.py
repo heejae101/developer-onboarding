@@ -8,8 +8,10 @@ from typing import List, Optional
 
 class FileSearchTool:
     """Search for files in the project"""
-    
-    def __init__(self, project_root: str = "/Users/chaehuijae/Desktop/가이드"):
+
+    def __init__(self, project_root: str | Path | None = None):
+        if project_root is None:
+            project_root = Path(__file__).resolve().parents[3]
         self.project_root = Path(project_root)
     
     def search_files(self, query: str, extensions: Optional[List[str]] = None) -> List[dict]:
@@ -118,12 +120,12 @@ class GuardrailsTool:
     ]
     
     CASUAL_RESPONSES = {
-        "퇴근": "퇴근은 칼퇴가 국룰이죠! 🏃 개발 질문이 있으시면 말씀해주세요.",
-        "힘들": "힘내세요! 💪 개발 관련 도움이 필요하시면 질문해주세요.",
-        "피곤": "커피 한잔 어때요? ☕ 개발 질문 있으시면 말씀해주세요.",
-        "안녕": "안녕하세요! 👋 개발/온보딩 관련 질문이 있으시면 도와드릴게요.",
-        "하이": "반가워요! 개발 관련 질문이 있으시면 말씀해주세요.",
-        "default": "저는 개발/온보딩 도우미예요. 개발 관련 질문을 해주세요! 🤖"
+        "퇴근": "퇴근은 칼퇴가 국룰이죠. 개발 질문이 있으시면 말씀해주세요.",
+        "힘들": "힘내세요. 개발 관련 도움이 필요하시면 질문해주세요.",
+        "피곤": "커피 한잔 어때요. 개발 질문 있으시면 말씀해주세요.",
+        "안녕": "안녕하세요. 개발/온보딩 관련 질문이 있으시면 도와드릴게요.",
+        "하이": "반가워요. 개발 관련 질문이 있으시면 말씀해주세요.",
+        "default": "저는 개발/온보딩 도우미예요. 개발 관련 질문을 해주세요."
     }
     
     @staticmethod
@@ -139,12 +141,12 @@ class GuardrailsTool:
         # 1. 욕설 체크 - API 안 태움 (빠른 필터)
         for profanity in GuardrailsTool.PROFANITY_PATTERNS:
             if profanity in question_lower:
-                return False, "⚠️ 부적절한 표현이 감지되었습니다. 예의 바른 표현으로 다시 질문해주세요."
+                return False, "부적절한 표현이 감지되었습니다. 예의 바른 표현으로 다시 질문해주세요."
         
         # 2. 탈옥 시도 체크 - API 안 태움 (빠른 필터)
         for jailbreak in GuardrailsTool.JAILBREAK_PATTERNS:
             if jailbreak in question_lower:
-                return False, "🚫 해당 요청은 처리할 수 없습니다. 개발/온보딩 관련 질문을 해주세요."
+                return False, "해당 요청은 처리할 수 없습니다. 개발/온보딩 관련 질문을 해주세요."
         
         # 3. 잡담/감정표현 체크 - API 안 태우고 빠른 응답
         for casual in GuardrailsTool.CASUAL_PATTERNS:
@@ -158,11 +160,11 @@ class GuardrailsTool:
         # 4. 범위 밖 주제 체크 - API 안 태움
         for blocked in GuardrailsTool.BLOCKED_TOPICS:
             if blocked in question_lower:
-                return False, f"📌 '{blocked}' 관련 질문은 제 전문 분야가 아니에요.\n\n개발/온보딩 관련 질문을 해주세요!"
+                return False, f"'{blocked}' 관련 질문은 제 전문 분야가 아니에요.\n\n개발/온보딩 관련 질문을 해주세요."
         
         # 5. 너무 짧은 입력 (1-2글자) - API 안 태움
         if len(question.strip()) < 3:
-            return False, "❓ 좀 더 구체적으로 질문해주세요!"
+            return False, "좀 더 구체적으로 질문해주세요."
             
         # ---------------------------------------------------------
         # 6. Kakao Kanana Safeguard 모델 검증 (정밀 검사)
@@ -182,15 +184,15 @@ class GuardrailsTool:
             if not is_safe:
                 # 안전하지 않은 경우 사유 분석
                 if not details["content_safety"]:
-                    return False, "⚠️ [Kanana] 유해한 콘텐츠가 감지되었습니다."
+                    return False, "[Kanana] 유해한 콘텐츠가 감지되었습니다."
                 if not details["legal_safety"]:
-                    return False, "⚖️ [Kanana] 법적 위험(개인정보/저작권)이 감지되었습니다."
+                    return False, "[Kanana] 법적 위험(개인정보/저작권)이 감지되었습니다."
                 if not details["prompt_safety"]:
-                    return False, "🚫 [Kanana] 프롬프트 인젝션 공격이 감지되었습니다."
+                    return False, "[Kanana] 프롬프트 인젝션 공격이 감지되었습니다."
                     
         except Exception as e:
             # 모델 로드 실패 시 로그 남기고 일단 통과 (서비스 중단 방지)
-            print(f"⚠️ Kanana Safeguard Error: {e}")
+            print(f"Kanana Safeguard Error: {e}")
         
         return True, ""
     
@@ -205,7 +207,7 @@ class GuardrailsTool:
             if topics:
                 suggestions = "\n".join([f'- "{topic} 알려줘"' for topic in topics])
                 return f"""
-💡 프로젝트 룰에서 발견된 다음 주제들로 질문해보세요:
+프로젝트 룰에서 발견된 다음 주제들로 질문해보세요:
 {suggestions}
 """
         except Exception as e:
@@ -213,7 +215,7 @@ class GuardrailsTool:
             
         # Fallback to static suggestions
         return """
-💡 다음과 같은 질문을 해주세요:
+다음과 같은 질문을 해주세요:
 - "Spring Boot에서 API 만드는 규칙 알려줘"
 - "UserController 파일 찾아줘"
 - "프로젝트 구조 설명해줘"
@@ -242,9 +244,9 @@ class RuleSearchTool:
         results = self.rag_manager.search(query)
         
         if not results:
-            return "❌ 관련 규칙을 찾을 수 없습니다."
-            
-        response = f"🔍 **'{query}' 관련 프로젝트 규칙:**\n\n"
+            return "NO_RULES: 관련 규칙을 찾을 수 없습니다."
+
+        response = f"'{query}' 관련 프로젝트 규칙:\n\n"
         
         for i, result in enumerate(results, 1):
             doc = result["document"]
@@ -259,8 +261,10 @@ class RuleSearchTool:
 
 class FileManagementTool:
     """Tool for creating, editing, and managing files"""
-    
-    def __init__(self, project_root: str = "/Users/chaehuijae/Desktop/가이드"):
+
+    def __init__(self, project_root: str | Path | None = None):
+        if project_root is None:
+            project_root = Path(__file__).resolve().parents[3]
         self.project_root = Path(project_root)
         
     def create_file(self, path: str, content: str) -> str:
@@ -274,9 +278,9 @@ class FileManagementTool:
             with open(full_path, 'w', encoding='utf-8') as f:
                 f.write(content)
                 
-            return f"✅ File created successfully: {path}"
+            return f"File created successfully: {path}"
         except Exception as e:
-            return f"❌ Failed to create file: {e}"
+            return f"Failed to create file: {e}"
             
     def edit_file(self, path: str, edit_instruction: str, content: str) -> str:
         """Edit an existing file (Overwrite for now)"""
@@ -284,7 +288,7 @@ class FileManagementTool:
             full_path = self._resolve_path(path)
             
             if not full_path.exists():
-                return f"❌ File not found: {path}"
+                return f"File not found: {path}"
                 
             # For now, we support full overwrite or append.
             # Complex editing (diff) might need LLM assistance,
@@ -293,9 +297,9 @@ class FileManagementTool:
             with open(full_path, 'w', encoding='utf-8') as f:
                 f.write(content)
                 
-            return f"✅ File updated successfully: {path}"
+            return f"File updated successfully: {path}"
         except Exception as e:
-            return f"❌ Failed to edit file: {e}"
+            return f"Failed to edit file: {e}"
             
     def delete_file(self, path: str) -> str:
         """Delete a file"""
@@ -303,12 +307,12 @@ class FileManagementTool:
             full_path = self._resolve_path(path)
             
             if not full_path.exists():
-                return f"❌ File not found: {path}"
+                return f"File not found: {path}"
                 
             os.remove(full_path)
-            return f"✅ File deleted successfully: {path}"
+            return f"File deleted successfully: {path}"
         except Exception as e:
-            return f"❌ Failed to delete file: {e}"
+            return f"Failed to delete file: {e}"
             
     def _resolve_path(self, path: str) -> Path:
         """Resolve path against project root"""
@@ -326,9 +330,14 @@ class FileManagementTool:
 
 class CommandExecutor:
     """Execute shell commands safely"""
-    
+
     ALLOWED_COMMANDS = ["ls", "cat", "grep", "find", "pwd", "mkdir", "rm", "cp", "mv", "npm", "node", "java", "javac", "python", "echo", "touch"]
-    
+
+    def __init__(self, project_root: str | Path | None = None):
+        if project_root is None:
+            project_root = Path(__file__).resolve().parents[3]
+        self.project_root = Path(project_root)
+
     def run_command(self, command: str) -> str:
         """Run a shell command"""
         import subprocess
@@ -337,11 +346,11 @@ class CommandExecutor:
         # Security check
         cmd_parts = shlex.split(command)
         if not cmd_parts:
-            return "❌ Empty command"
+            return "Empty command"
             
         base_cmd = cmd_parts[0]
         if base_cmd not in self.ALLOWED_COMMANDS and not base_cmd.endswith(".sh"): # Allow scripts
-             return f"❌ Command not allowed: {base_cmd}"
+             return f"Command not allowed: {base_cmd}"
         
         try:
             result = subprocess.run(
@@ -349,7 +358,7 @@ class CommandExecutor:
                 shell=True, 
                 capture_output=True, 
                 text=True, 
-                cwd="/Users/chaehuijae/Desktop/가이드",
+                cwd=str(self.project_root),
                 timeout=30
             )
             
@@ -357,9 +366,9 @@ class CommandExecutor:
             if result.stderr:
                 output += f"\n[Stderr]\n{result.stderr}"
                 
-            return output if output.strip() else "✅ Command executed (no output)"
+            return output if output.strip() else "Command executed (no output)"
             
         except subprocess.TimeoutExpired:
-            return "❌ Command timed out"
+            return "Command timed out"
         except Exception as e:
-            return f"❌ Execution failed: {e}"
+            return f"Execution failed: {e}"

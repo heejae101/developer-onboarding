@@ -154,12 +154,12 @@ def get_agent_graph():
     new_hash = _settings_hash(settings)
     
     if _graph is None or _current_settings_hash != new_hash:
-        print("\n" + "="*50)
-        print("🔧 [Graph] Rebuilding Agent Graph...")
-        print(f"   ► Self-RAG: {'ON' if settings.enable_self_rag else 'OFF'}")
-        print(f"   ► Parallel Search: {'ON' if settings.enable_parallel_search else 'OFF'}")
-        print(f"   ► Answer Grading: {'ON' if settings.enable_answer_grading else 'OFF'}")
-        print("="*50 + "\n")
+        print("\n" + "=" * 50)
+        print("[Graph] Rebuilding Agent Graph...")
+        print(f"   - Self-RAG: {'ON' if settings.enable_self_rag else 'OFF'}")
+        print(f"   - Parallel Search: {'ON' if settings.enable_parallel_search else 'OFF'}")
+        print(f"   - Answer Grading: {'ON' if settings.enable_answer_grading else 'OFF'}")
+        print("=" * 50 + "\n")
         
         _graph = build_agent_graph(settings)
         _current_settings_hash = new_hash
@@ -172,4 +172,4 @@ def invalidate_graph():
     global _graph, _current_settings_hash
     _graph = None
     _current_settings_hash = None
-    print("🔄 [Graph] Cache invalidated! Next request will rebuild graph.")
+    print("[Graph] Cache invalidated. Next request will rebuild graph.")

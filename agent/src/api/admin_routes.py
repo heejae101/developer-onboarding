@@ -16,63 +16,66 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 @router.get("/graph-settings", response_model=GraphSettings)
 async def get_settings():
     """현재 그래프 설정 조회"""
-    print("📖 [Admin API] GET /admin/graph-settings - Fetching current settings")
+    print("[Admin API] GET /admin/graph-settings - Fetching current settings")
     settings = get_graph_settings()
-    print(f"✅ [Admin API] Returning settings: self_rag={settings.enable_self_rag}, "
-          f"parallel={settings.enable_parallel_search}, grading={settings.enable_answer_grading}")
+    print(
+        "[Admin API] Returning settings: "
+        f"self_rag={settings.enable_self_rag}, "
+        f"parallel={settings.enable_parallel_search}, grading={settings.enable_answer_grading}"
+    )
     return settings
 
 
 @router.put("/graph-settings", response_model=GraphSettings)
 async def update_settings(settings: GraphSettings):
     """그래프 설정 업데이트 (즉시 반영)"""
-    print("🔧 [Admin API] PUT /admin/graph-settings - Updating settings")
+    print("[Admin API] PUT /admin/graph-settings - Updating settings")
     print(f"   New values: self_rag={settings.enable_self_rag}, "
           f"parallel={settings.enable_parallel_search}, grading={settings.enable_answer_grading}")
     
     try:
         save_graph_settings(settings)
         invalidate_graph_cache()
-        print("✅ [Admin API] Settings updated and graph invalidated")
+        print("[Admin API] Settings updated and graph invalidated")
         return settings
     except Exception as e:
-        print(f"❌ [Admin API] Failed to update settings: {e}")
+        print(f"[Admin API] Failed to update settings: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.patch("/graph-settings", response_model=GraphSettings)
 async def patch_settings(updates: dict):
     """그래프 설정 일부만 업데이트"""
-    print(f"🔧 [Admin API] PATCH /admin/graph-settings - Partial update: {updates}")
+    print(f"[Admin API] PATCH /admin/graph-settings - Partial update: {updates}")
     
     try:
         current = get_graph_settings()
         updated = current.model_copy(update=updates)
         save_graph_settings(updated)
         invalidate_graph_cache()
-        print("✅ [Admin API] Partial settings updated and graph invalidated")
+        print("[Admin API] Partial settings updated and graph invalidated")
         return updated
     except Exception as e:
-        print(f"❌ [Admin API] Failed to patch settings: {e}")
+        print(f"[Admin API] Failed to patch settings: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/graph-settings/reset", response_model=GraphSettings)
 async def reset_settings():
     """설정을 기본값으로 초기화"""
-    print("🔄 [Admin API] POST /admin/graph-settings/reset - Resetting to defaults")
+    print("[Admin API] POST /admin/graph-settings/reset - Resetting to defaults")
     
     settings = reset_graph_settings()
     invalidate_graph_cache()
     
-    print("✅ [Admin API] Settings reset to defaults and graph invalidated")
+    print("[Admin API] Settings reset to defaults and graph invalidated")
     return settings
 
 
 @router.get("/graph-visualization")
 async def get_graph_visualization():
     """현재 그래프 구조 시각화 정보 반환 (Mermaid 형식)"""
-    print("🎨 [Admin API] GET /admin/graph-visualization - Generating graph diagram")
+    print("[Admin API] GET /admin/graph-visualization - Generating graph diagram")
     
     settings = get_graph_settings()
     
@@ -122,5 +125,5 @@ async def get_graph_visualization():
         }
     }
     
-    print(f"✅ [Admin API] Visualization generated with {len(mermaid)} nodes")
+    print(f"[Admin API] Visualization generated with {len(mermaid)} nodes")
     return result

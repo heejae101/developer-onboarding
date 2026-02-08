@@ -11,9 +11,9 @@ def test_rag():
     print("Initializing RuleSearchTool...")
     try:
         tool = RuleSearchTool()
-        print("✅ Initialization successful")
+        print("Initialization successful")
     except Exception as e:
-        print(f"❌ Initialization failed: {e}")
+        print(f"Initialization failed: {e}")
         return
 
     queries = [
@@ -31,7 +31,7 @@ def test_rag():
             print(result)
             print("-" * 50)
         except Exception as e:
-            print(f"❌ Search failed: {e}")
+            print(f"Search failed: {e}")
 
 if __name__ == "__main__":
     test_rag()

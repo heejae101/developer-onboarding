@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
     settings = get_settings()
-    print(f"🚀 Starting Agent Service...")
+    print("Starting Agent Service...")
     print(f"   LLM Mode: {settings.llm_mode}")
     print(f"   LLM Provider: {settings.llm_provider}")
     print(f"   Debug: {settings.debug}")
@@ -24,17 +24,17 @@ async def lifespan(app: FastAPI):
         can_run_rag = True
         if settings.embedding_provider == "openai" and not settings.openai_api_key:
             can_run_rag = False
-            print("⚠️  RAG Skipped: OpenAI API Key missing for OpenAI Embeddings")
+            print("RAG Skipped: OpenAI API Key missing for OpenAI Embeddings")
             
         if can_run_rag:
              from src.agent.rag_modules import RAGManager
              RAGManager() # This triggers initialization and logs
     except Exception as e:
-        print(f"⚠️  RAG Initialization Failed: {e}")
+        print(f"RAG Initialization Failed: {e}")
         
     yield
     # Shutdown
-    print("👋 Shutting down Agent Service...")
+    print("Shutting down Agent Service...")
 
 
 def create_app() -> FastAPI:

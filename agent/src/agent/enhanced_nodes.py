@@ -72,7 +72,7 @@ JSON 형식으로 응답:
         state["relevance_score"] = 0.5
     
     if settings.enable_step_logging:
-        print(f"📊 [Evaluate] relevance={state['relevance_score']:.2f}, relevant={state['is_relevant']}")
+    print(f"[Evaluate] relevance={state['relevance_score']:.2f}, relevant={state['is_relevant']}")
     
     return state
 
@@ -130,7 +130,7 @@ async def parallel_search_node(state: AgentState) -> AgentState:
     state["file_results"] = file_result.get("results", [])
     
     if settings.enable_step_logging:
-        print(f"🔍 [Search] RAG={len(state['rag_results'])}, Files={len(state['file_results'])}")
+    print(f"[Search] RAG={len(state['rag_results'])}, Files={len(state['file_results'])}")
     
     return state
 
@@ -184,7 +184,7 @@ async def synthesize_node(state: AgentState) -> AgentState:
     state["combined_context"] = rag_context + "\n" + file_context
     
     if settings.enable_step_logging:
-        print(f"📝 [Synthesize] Generated response ({len(content)} chars)")
+    print(f"[Synthesize] Generated response ({len(content)} chars)")
     
     return state
 
@@ -300,7 +300,7 @@ async def refine_answer_node(state: AgentState) -> AgentState:
     state["final_response"] = content
     
     if settings.enable_step_logging:
-        print(f"🔄 [Refine] Attempt {state['refine_attempts']}")
+    print(f"[Refine] Attempt {state['refine_attempts']}")
     
     return state
 

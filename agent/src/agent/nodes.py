@@ -2,6 +2,9 @@
 Agent nodes implementation
 """
 from src.agent.state import AgentState, IntentType
+from typing import Literal
+
+NextNode = Literal["search", "verify", "code_review", "autonomous", "complete"]
 from src.llm import get_llm_client
 import json
 
@@ -49,14 +52,15 @@ JSON 형식으로 응답: {{"intent": "SEARCH" | "VERIFY" | "CODE_REVIEW" | "AUT
     except (json.JSONDecodeError, AttributeError, IndexError):
         intent = "SEARCH"
     
-    node_map = {
+    node_map: dict[IntentType, NextNode] = {
         "SEARCH": "search",
         "VERIFY": "verify",
         "CODE_REVIEW": "code_review",
-        "AUTONOMOUS": "autonomous"
+        "AUTONOMOUS": "autonomous",
     }
-    
-    state["next_node"] = node_map.get(intent, "search")
+
+    next_node: NextNode = node_map[intent] if intent in node_map else "search"
+    state["next_node"] = next_node
     return state
 
 
@@ -91,7 +95,7 @@ def search_rules_node(state: AgentState) -> AgentState:
     rule_tool = RuleSearchTool()
     rag_result = rule_tool.search(message)
     
-    if "❌" in rag_result:
+    if rag_result.startswith("NO_RULES:"):
         # Fallback to general LLM if no rules found
         prompt = f"""사용자 질문에 대해 도움이 되는 답변을 제공하세요.
         
