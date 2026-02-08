@@ -5,7 +5,7 @@
 ---
 
 ## 🌟 핵심 가치 (Core Vision)
-- **묻지 않고 일하기**: AI 에이전트가 팀의 프로젝트 룰(`rules.md`)을 학습하여 실시간으로 가이드합니다.
+- **묻지 않고 일하기**: AI 에이전트가 팀의 프로젝트 룰(`rules/`)을 학습하여 실시간으로 가이드합니다.
 - **업무 자동화**: 반복적인 엑셀 관리와 온보딩 체크리스트를 워크플로우 엔진이 대신 처리합니다.
 - **현무 적합성**: 실무 Java 환경과 최신 AI(Python LangGraph) 생태계를 하이브리드로 결합하여 실질적인 개발 경험을 제공합니다.
 
@@ -13,28 +13,28 @@
 
 ## 🛠 기술 스택 (Updated)
 ### Hybrid Backend
-- **Main Server (Java)**: Spring Boot 3.2, Java 17, JPA, PostgreSQL (메인 비즈니스 및 실습 관리)
-- **AI Agent (Python)**: LangGraph, FastAPI, MCP(Model Context Protocol) (지능형 추론 및 도구 연동)
-- **Database**: PostgreSQL (메인 및 AI 상태 저장), Redis (알림 및 캐싱)
+- **Main Server (Java)**: Spring Boot 4.0.1, Java 17, JPA, H2 (dev 기본)
+- **AI Agent (Python)**: LangGraph, FastAPI, MCP(Model Context Protocol)
+- **Database**: PostgreSQL (agent 기본 설정), Redis (agent cache 설정)
 
 ### Modern Frontend
-- **Framework**: React 18, Vite 5
-- **Styling**: Tailwind CSS (Modern Glassmorphism)
-- **Libraries**: Lucide React, OpenLayers (GIS 실습), React Query, Zustand
+- **Framework**: React 19, Vite 6
+- **Styling**: Tailwind CSS 4
+- **Libraries**: Lucide React, OpenLayers (GIS 실습), React Router, fetch-event-source, clsx, tailwind-merge
 
 ---
 
 ## 📁 프로젝트 구조 및 문서화
 프로젝트의 히스토리와 설계 자산은 아래 폴더에서 관리됩니다.
 
-- **[`/01_기획배경`](file:///Users/chaehuijae/Desktop/가이드/01_기획배경)**: 신입 개발자의 고민과 기획의 시작점
-- **[`/02_기획서`](file:///Users/chaehuijae/Desktop/가이드/02_기획서)**: 제품 요구사항 정의서(PRD) 및 핵심 시나리오
-- **[`/03_설계`](file:///Users/chaehuijae/Desktop/가이드/03_설계)**:
-    - [기술 아키텍처 제안서](file:///Users/chaehuijae/Desktop/가이드/03_설계/기술_아키텍처_제안서.md)
-    - [데이터베이스 모델링](file:///Users/chaehuijae/Desktop/가이드/03_설계/01_데이터베이스_모델링.md)
-    - [API 및 인터페이스 설계](file:///Users/chaehuijae/Desktop/가이드/03_설계/02_API_인터페이스_설계.md)
-    - [LangGraph 노드 상세 설계](file:///Users/chaehuijae/Desktop/가이드/03_설계/03_LangGraph_노드_설계.md)
-    - [MVP 개발 계획 (2주 집중)](file:///Users/chaehuijae/Desktop/가이드/03_설계/05_MVP_개발_계획.md)
+- **[`/01_기획배경`](./01_기획배경)**: 신입 개발자의 고민과 기획의 시작점
+- **[`/02_기획서`](./02_기획서)**: 제품 요구사항 정의서(PRD) 및 핵심 시나리오
+- **[`/03_설계`](./03_설계)**:
+    - [기술 아키텍처 제안서](./03_설계/기술_아키텍처_제안서.md)
+    - [데이터베이스 모델링](./03_설계/01_데이터베이스_모델링.md)
+    - [API 및 인터페이스 설계](./03_설계/02_API_인터페이스_설계.md)
+    - [LangGraph 노드 상세 설계](./03_설계/03_LangGraph_노드_설계.md)
+    - [MVP 개발 계획 (2주 집중)](./03_설계/05_상세_구현_일정.md)
 
 ---
 
@@ -73,4 +73,3 @@ LLM_PROVIDER=ollama
 ## 🎯 마일스톤 (MVP)
 1. **1주차**: Java 베이스 환경 구축 및 랭그래프 기반 RAG 에이전트 연동.
 2. **2주차**: Java 코드 실습 화면 및 AI 실시간 피드백 검증 완료.
-

@@ -13,12 +13,10 @@ from src.api.schemas import (
 )
 from src.agent import get_agent_graph, AgentState
 from src.config import get_settings
-from src.api import websocket
 from src.api import admin_routes
 import uuid
 
 router = APIRouter()
-router.include_router(websocket.router)
 router.include_router(admin_routes.router)
 
 
