@@ -1,8 +1,9 @@
 """
 API Routes
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from src.api.schemas import (
+    ApiResponse,
     ChatRequest,
     ChatResponse,
     AgentTaskRequest,
@@ -12,6 +13,7 @@ from src.api.schemas import (
     HealthResponse,
 )
 from src.agent import get_agent_graph, AgentState
+from src.error_codes import INTERNAL_ERROR
 from src.config import get_settings
 from src.api import admin_routes
 import uuid
@@ -20,18 +22,20 @@ router = APIRouter()
 router.include_router(admin_routes.router)
 
 
-@router.get("/health", response_model=HealthResponse, tags=["Health"])
+@router.get("/health", response_model=ApiResponse[HealthResponse], tags=["Health"])
 async def health_check():
     """Health check endpoint"""
     settings = get_settings()
-    return HealthResponse(
-        status="healthy",
-        llm_mode=settings.llm_mode,
-        llm_provider=settings.llm_provider
+    return ApiResponse(
+        data=HealthResponse(
+            status="healthy",
+            llm_mode=settings.llm_mode,
+            llm_provider=settings.llm_provider,
+        )
     )
 
 
-@router.post("/chat", response_model=ChatResponse, tags=["Chat"])
+@router.post("/chat", response_model=ApiResponse[ChatResponse], tags=["Chat"])
 async def chat(request: ChatRequest):
     """
     Chat with the AI agent.
@@ -49,20 +53,26 @@ async def chat(request: ChatRequest):
         
         result = await graph.ainvoke(initial_state)
         
-        return ChatResponse(
-            response=result.get("final_response", "응답을 생성할 수 없습니다."),
-            intent=result.get("next_node"),
-            metadata={
-                "thread_id": initial_state["thread_id"],
-                "validation_result": result.get("validation_result"),
-                "code_review_result": result.get("code_review_result"),
-            }
+        return ApiResponse(
+            data=ChatResponse(
+                response=result.get("final_response", "응답을 생성할 수 없습니다."),
+                intent=result.get("next_node"),
+                metadata={
+                    "thread_id": initial_state["thread_id"],
+                    "validation_result": result.get("validation_result"),
+                    "code_review_result": result.get("code_review_result"),
+                },
+            )
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        return ApiResponse(
+            code=INTERNAL_ERROR.http_status,
+            message="실패했습니다.",
+            error={"code": INTERNAL_ERROR.code, "message": INTERNAL_ERROR.message},
+        )
 
 
-@router.post("/code-review", response_model=CodeReviewResponse, tags=["Code Review"])
+@router.post("/code-review", response_model=ApiResponse[CodeReviewResponse], tags=["Code Review"])
 async def review_code(request: CodeReviewRequest):
     """
     Review code for style, bugs, performance, and security issues.
@@ -82,20 +92,28 @@ async def review_code(request: CodeReviewRequest):
         from src.agent.nodes import code_review_node
         result = code_review_node(initial_state)
         
-        review_result = result.get("code_review_result", {})
-        return CodeReviewResponse(
-            style=review_result.get("style", []),
-            bugs=review_result.get("bugs", []),
-            performance=review_result.get("performance", []),
-            security=review_result.get("security", []),
-            summary=review_result.get("summary", "리뷰 결과 없음"),
-            score=review_result.get("score", 0)
+        review_result = result.get("code_review_result") or {}
+        if not isinstance(review_result, dict):
+            review_result = {}
+        return ApiResponse(
+            data=CodeReviewResponse(
+                style=review_result.get("style", []),
+                bugs=review_result.get("bugs", []),
+                performance=review_result.get("performance", []),
+                security=review_result.get("security", []),
+                summary=review_result.get("summary", "리뷰 결과 없음"),
+                score=review_result.get("score", 0),
+            )
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        return ApiResponse(
+            code=INTERNAL_ERROR.http_status,
+            message="실패했습니다.",
+            error={"code": INTERNAL_ERROR.code, "message": INTERNAL_ERROR.message},
+        )
 
 
-@router.post("/agent/task", response_model=AgentTaskResponse, tags=["Agent"])
+@router.post("/agent/task", response_model=ApiResponse[AgentTaskResponse], tags=["Agent"])
 async def create_agent_task(request: AgentTaskRequest):
     """
     Create an autonomous agent task.
@@ -126,17 +144,23 @@ async def create_agent_task(request: AgentTaskRequest):
         
         state = complete_node(state)
         
-        return AgentTaskResponse(
-            task_id=task_id,
-            status="completed",
-            result=state.get("final_response"),
-            steps_completed=state.get("steps_completed", 0),
-            error=state.get("error")
+        return ApiResponse(
+            data=AgentTaskResponse(
+                task_id=task_id,
+                status="completed",
+                result=state.get("final_response"),
+                steps_completed=state.get("steps_completed", 0),
+                error=state.get("error"),
+            )
         )
-    except Exception as e:
-        return AgentTaskResponse(
-            task_id=str(uuid.uuid4()),
-            status="failed",
-            error=str(e),
-            steps_completed=0
+    except Exception:
+        return ApiResponse(
+            code=INTERNAL_ERROR.http_status,
+            message="실패했습니다.",
+            error={"code": INTERNAL_ERROR.code, "message": INTERNAL_ERROR.message},
+            data=AgentTaskResponse(
+                task_id=str(uuid.uuid4()),
+                status="failed",
+                steps_completed=0,
+            ),
         )

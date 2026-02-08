@@ -1,8 +1,31 @@
 """
 API Schemas (Request/Response DTOs)
 """
-from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from datetime import datetime
+from decimal import Decimal
+from uuid import UUID
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, Literal, TypeVar, Generic, Any
+
+T = TypeVar("T")
+
+
+class ApiResponse(BaseModel, Generic[T]):
+    """Standard API response envelope"""
+    model_config = ConfigDict(
+        exclude_none=True,
+        json_encoders={
+            datetime: lambda value: value.isoformat(),
+            Decimal: lambda value: str(value),
+            UUID: lambda value: str(value),
+        }
+    )
+    code: int = Field(200, description="HTTP-like status code")
+    message: str = Field("성공했습니다.", description="Result message")
+    data: Optional[T] = Field(None, description="Response payload")
+    error: Optional[dict[str, Any]] = Field(None, description="Error payload with code/message")
+    timestamp: datetime = Field(default_factory=datetime.now, description="Response time")
+    meta: Optional[dict[str, Any]] = Field(None, description="Additional metadata")
 
 
 class ChatRequest(BaseModel):
@@ -24,7 +47,15 @@ class ChatResponse(BaseModel):
     """Chat response to client"""
     response: str
     intent: Optional[str] = None
-    metadata: Optional[dict] = None
+    metadata: Optional["ChatMetadata"] = None
+
+
+class ChatMetadata(BaseModel):
+    """Chat response metadata"""
+    model_config = ConfigDict(exclude_none=True)
+    thread_id: Optional[str] = None
+    validation_result: Optional[dict[str, Any]] = None
+    code_review_result: Optional[dict[str, Any]] = None
 
 
 class AgentTaskRequest(BaseModel):

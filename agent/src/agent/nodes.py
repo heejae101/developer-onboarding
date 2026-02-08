@@ -9,6 +9,22 @@ from src.llm import get_llm_client
 import json
 
 
+def _extract_content(response) -> str:
+    """Extract content from OpenAI/Anthropic/Ollama responses"""
+    try:
+        if hasattr(response, "choices"):  # OpenAI
+            return response.choices[0].message.content
+        if hasattr(response, "content"):  # Anthropic
+            if isinstance(response.content, list):
+                return response.content[0].text
+            return response.content
+        if isinstance(response, dict):  # Ollama
+            return response.get("message", {}).get("content", str(response))
+        return str(response)
+    except (AttributeError, IndexError, KeyError):
+        return str(response)
+
+
 async def router_node(state: AgentState) -> AgentState:
     """Router node - determines intent and routes to appropriate handler"""
     from src.agent.tools import GuardrailsTool
@@ -40,13 +56,7 @@ JSON 형식으로 응답: {{"intent": "SEARCH" | "VERIFY" | "CODE_REVIEW" | "AUT
     ])
     
     try:
-        if hasattr(response, 'choices'):
-            content = response.choices[0].message.content
-        elif hasattr(response, 'content'):
-            content = response.content[0].text if isinstance(response.content, list) else response.content
-        else:
-            content = str(response)
-            
+        content = _extract_content(response)
         result = json.loads(content)
         intent: IntentType = result.get("intent", "SEARCH")
     except (json.JSONDecodeError, AttributeError, IndexError):
@@ -109,15 +119,7 @@ def search_rules_node(state: AgentState) -> AgentState:
         ])
         
         # Robust content extraction
-        try:
-            if hasattr(response, 'choices'):  # OpenAI
-                content = response.choices[0].message.content
-            elif hasattr(response, 'content'):  # Anthropic
-                content = response.content[0].text if isinstance(response.content, list) else response.content
-            else:
-                content = str(response)
-        except (AttributeError, IndexError):
-            content = str(response)
+        content = _extract_content(response)
     else:
         # Generate response using RAG result
         prompt = f"""사용자 질문에 대해 검색된 프로젝트 규칙을 참고하여 답변하세요.
@@ -135,15 +137,7 @@ def search_rules_node(state: AgentState) -> AgentState:
         ])
         
         # Robust content extraction
-        try:
-            if hasattr(response, 'choices'):  # OpenAI
-                content = response.choices[0].message.content
-            elif hasattr(response, 'content'):  # Anthropic
-                content = response.content[0].text if isinstance(response.content, list) else response.content
-            else:
-                content = str(response)
-        except (AttributeError, IndexError):
-            content = str(response)
+        content = _extract_content(response)
 
     state["final_response"] = content
     state["next_node"] = "complete"
@@ -174,7 +168,7 @@ def verify_rules_node(state: AgentState) -> AgentState:
         {"role": "user", "content": prompt}
     ])
     
-    content = response.choices[0].message.content if hasattr(response, 'choices') else str(response)
+    content = _extract_content(response)
     
     try:
         state["validation_result"] = json.loads(content)
@@ -220,7 +214,7 @@ def code_review_node(state: AgentState) -> AgentState:
         {"role": "user", "content": prompt}
     ])
     
-    content = response.choices[0].message.content if hasattr(response, 'choices') else str(response)
+    content = _extract_content(response)
     
     try:
         state["code_review_result"] = json.loads(content)
@@ -249,12 +243,7 @@ def think_node(state: AgentState) -> AgentState:
         {"role": "user", "content": prompt}
     ])
     
-    if hasattr(response, 'choices'):
-        content = response.choices[0].message.content
-    elif hasattr(response, 'content'):
-        content = response.content[0].text if isinstance(response.content, list) else response.content
-    else:
-        content = str(response)
+    content = _extract_content(response)
     state["current_thought"] = content
     return state
 
@@ -274,7 +263,7 @@ def act_node(state: AgentState) -> AgentState:
         {"role": "user", "content": prompt}
     ])
     
-    content = response.choices[0].message.content if hasattr(response, 'choices') else str(response)
+    content = _extract_content(response)
     state["action_result"] = content
     state["last_observation"] = content
     state["steps_completed"] = state.get("steps_completed", 0) + 1

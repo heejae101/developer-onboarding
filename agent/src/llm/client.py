@@ -28,11 +28,11 @@ class LLMClient(ABC):
 class OpenAIClient(LLMClient):
     """OpenAI API client"""
     
-    def __init__(self, model: str = "gpt-4o-mini"):
+    def __init__(self, model: str | None = None):
         from openai import OpenAI
         settings = get_settings()
         self.client = OpenAI(api_key=settings.openai_api_key)
-        self.model = model
+        self.model = model or settings.openai_model
     
     def chat(self, messages: list[dict], stream: bool = False) -> Any:
         return self.client.chat.completions.create(
@@ -59,11 +59,11 @@ class OpenAIClient(LLMClient):
 class AnthropicClient(LLMClient):
     """Anthropic API client"""
     
-    def __init__(self, model: str = "claude-3-haiku-20240307"):
+    def __init__(self, model: str | None = None):
         from anthropic import Anthropic
         settings = get_settings()
         self.client = Anthropic(api_key=settings.anthropic_api_key)
-        self.model = model
+        self.model = model or settings.anthropic_model
     
     def chat(self, messages: list[dict], stream: bool = False) -> Any:
         # Convert OpenAI format to Anthropic format
@@ -107,7 +107,7 @@ class OllamaClient(LLMClient):
         import ollama
         settings = get_settings()
         self.ollama = ollama
-        self.model = model or settings.ollama_model
+        self.model = model or settings.ollama_llm_model
     
     def chat(self, messages: list[dict], stream: bool = False) -> Any:
         return self.ollama.chat(
@@ -151,6 +151,6 @@ def get_embedding_client() -> LLMClient:
     settings = get_settings()
     
     if settings.embedding_provider == "ollama":
-        return OllamaClient()
+        return OllamaClient(model=settings.ollama_embed_model)
     else:
         return OpenAIClient()
